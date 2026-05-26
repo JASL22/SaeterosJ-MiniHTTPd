@@ -5,7 +5,6 @@
 int main(int argc, char *argv[])
 {
     int port = DEFAULT_PORT;
-
     //Procesar argumento de puerto opcional
     if (argc == 2) {
         port = atoi(argv[1]);
@@ -18,16 +17,13 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Uso: %s [puerto]\n", argv[0]);
         return EXIT_FAILURE;
     }
-
     printf("=== minihttpd arrancando en puerto %d ===\n", port);
     printf("Directorio raíz: %s\n", WWW_ROOT);
     printf("Presiona Ctrl+C para detener.\n\n");
-
     //Iniciar el servidor (bloquea hasta SIGINT)
     if (run_server(port) != 0) {
         fprintf(stderr, "Error fatal al iniciar el servidor.\n");
         return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }
