@@ -1,18 +1,3 @@
-/*
- * http.c – Parsing de peticiones HTTP/1.1 y generación de respuestas
- *
- * Funciones clave:
- *   parse_request()  → valida y descompone la petición entrante
- *   send_response()  → construye y envía la respuesta con encabezados
- *   send_error()     → envía una respuesta de error HTML
- *
- * Seguridad implementada:
- *   - No usar strcpy/sprintf (usar strncpy/snprintf)
- *   - Validar longitudes de método, URI y versión
- *   - Rechazar métodos distintos a GET con 405
- *   - Rechazar peticiones mal formadas con 400
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -99,11 +84,6 @@ int parse_request(const char *buffer, size_t len, http_request_t *req)
     snprintf(req->method,  sizeof(req->method),  "%s", method);
     snprintf(req->uri,     sizeof(req->uri),     "%s", uri);
     snprintf(req->version, sizeof(req->version), "%s", version);
-
-
-
-
-
 
 
     /* ── Paso 6: Parsear encabezados ─────────────────────────────────────── */
