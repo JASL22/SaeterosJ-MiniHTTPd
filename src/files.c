@@ -24,7 +24,6 @@ static int has_traversal(const char *uri)
     if (strstr(lower, "%2f") != NULL)   return 1;
     return 0;
 }
-
 void serve_file(int client_fd, const char *uri, const char *www_root)
 {
     if (has_traversal(uri)) {
@@ -32,13 +31,11 @@ void serve_file(int client_fd, const char *uri, const char *www_root)
         send_error(client_fd, HTTP_403_FORBIDDEN);
         return;
     }
-
     char root_real[PATH_MAX];
     if (realpath(www_root, root_real) == NULL) {
         send_error(client_fd, HTTP_500_INTERNAL_ERROR);
         return;
     }
-
     const char *path_suffix = (strcmp(uri, "/") == 0) ? "/index.html" : uri;
     char candidate[PATH_MAX];
     int n = snprintf(candidate, sizeof(candidate), "%s%s", www_root, path_suffix);
@@ -46,13 +43,11 @@ void serve_file(int client_fd, const char *uri, const char *www_root)
         send_error(client_fd, HTTP_400_BAD_REQUEST);
         return;
     }
-
     char file_real[PATH_MAX];
     if (realpath(candidate, file_real) == NULL) {
         send_error(client_fd, HTTP_404_NOT_FOUND);
         return;
     }
-
     size_t root_len = strlen(root_real);
     if (strncmp(file_real, root_real, root_len) != 0 ||
         (file_real[root_len] != 0 && file_real[root_len] != '/')) {
@@ -60,7 +55,6 @@ void serve_file(int client_fd, const char *uri, const char *www_root)
         send_error(client_fd, HTTP_403_FORBIDDEN);
         return;
     }
-
     struct stat st;
     if (stat(file_real, &st) == -1) {
         send_error(client_fd, HTTP_404_NOT_FOUND);
@@ -70,19 +64,16 @@ void serve_file(int client_fd, const char *uri, const char *www_root)
         send_error(client_fd, HTTP_403_FORBIDDEN);
         return;
     }
-
     int fd = open(file_real, O_RDONLY);
     if (fd == -1) {
         send_error(client_fd, errno == EACCES ? HTTP_403_FORBIDDEN : HTTP_500_INTERNAL_ERROR);
         return;
     }
-
     const char *mime = get_mime_type(file_real);
     char date_buf[128];
     time_t now = time(NULL);
     struct tm *gmt = gmtime(&now);
     strftime(date_buf, sizeof(date_buf), "%a, %d %b %Y %H:%M:%S GMT", gmt);
-
     char header[1024];
     int hlen = snprintf(header, sizeof(header),
         "HTTP/1.1 200 OK\r\n"
@@ -93,15 +84,12 @@ void serve_file(int client_fd, const char *uri, const char *www_root)
         "Connection: keep-alive\r\n"
         "\r\n",
         date_buf, mime, (long long)st.st_size);
-
     if (hlen < 0 || hlen >= (int)sizeof(header)) {
         close(fd);
         send_error(client_fd, HTTP_500_INTERNAL_ERROR);
         return;
     }
-
     send(client_fd, header, (size_t)hlen, MSG_NOSIGNAL);
-
     char buf[FILE_BUFFER_SIZE];
     ssize_t bytes_read;
     while ((bytes_read = read(fd, buf, sizeof(buf))) > 0) {
