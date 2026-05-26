@@ -5,7 +5,6 @@
  * Si la extensión no se encuentra, retorna "application/octet-stream"
  * (tipo genérico para descarga binaria), comportamiento estándar y seguro.
  */
-
 #include <string.h>
 #include "mime.h"
 

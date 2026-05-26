@@ -11,9 +11,7 @@
 #include "files.h"
 #include "http.h"
 #include "mime.h"
-
 #define FILE_BUFFER_SIZE 65536
-
 static int has_traversal(const char *uri)
 {
     char lower[2048];
