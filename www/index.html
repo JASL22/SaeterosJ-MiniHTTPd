@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minihttpd – Servidor HTTP V1.1 en C</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1> Proyecto Integrador MiniHTTPd </h1>
+        <p class="subtitle">Servidor HTTP/1.1 implementado en C</p>
+    </header>
+
+    <main>
+        <section class="card">
+            <h2>✅ Servidor funcionando</h2>
+            <p>Si ves esta página, el servidor HTTP está corriendo correctamente.</p>
+        </section>
+
+        <section class="card">
+            <h2> Características implementadas</h2>
+            <ul>
+                <li>Método GET con parsing HTTP/1.1</li>
+                <li>Archivos estáticos (HTML, CSS, JS, imágenes)</li>
+                <li>Múltiples clientes con <strong>epoll</strong></li>
+                <li>Conexiones persistentes (keep-alive)</li>
+                <li>Tipos MIME automáticos</li>
+                <li>Protección contra Directory Traversal</li>
+                <li>Códigos de estado: 200, 400, 403, 404, 405, 500</li>
+            </ul>
+        </section>
+
+        <section class="card">
+            <h2> Seguridad </h2>
+            <p>Prueba de directory traversal (debe dar 403):</p>
+            <code>curl http://localhost:8080/../../../etc/passwd</code>
+        </section>
+
+        <section class="card">
+            <h2> Imagen de prueba</h2>
+            <img src="image.png" alt="Imagen de prueba" class="demo-img">
+        </section>
+    </main>
+
+    <footer>
+        <p>minihttpd Version 1.1 - Jhonn Saeteros</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
