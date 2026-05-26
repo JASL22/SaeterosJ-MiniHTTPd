@@ -4,11 +4,7 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/socket.h>
-
 #include "http.h"
-
-/* ── Texto descriptivo de cada código de estado ─────────────────────────── */
-
 const char *get_status_text(http_status_t status)
 {
     switch (status) {
@@ -22,7 +18,7 @@ const char *get_status_text(http_status_t status)
     }
 }
 
-/* ── Parsing de la petición HTTP ─────────────────────────────────────────── */
+//Parsing de la petición HTTP
 
 /*
  * parse_request: analiza el buffer de la petición HTTP cruda.
@@ -39,25 +35,24 @@ const char *get_status_text(http_status_t status)
  */
 int parse_request(const char *buffer, size_t len, http_request_t *req)
 {
-    /* Copiar el buffer para poder modificarlo con strtok/strsep */
+    //Copiar el buffer para poder modificarlo con strtok/strsep
     if (len >= RECV_BUFFER_SIZE)
         return HTTP_400_BAD_REQUEST;
-
     char copy[RECV_BUFFER_SIZE];
     memcpy(copy, buffer, len);
     copy[len] = '\0';
 
-    /* ── Paso 1: Extraer la línea de petición ───────────────────────────── */
+    //Paso 1: Extraer la línea de petición 
     char *saveptr = NULL;
     char *request_line = strtok_r(copy, "\r\n", &saveptr);
     if (request_line == NULL)
         return HTTP_400_BAD_REQUEST;
 
-    /* Validar longitud total de la línea de petición */
+    //Validar longitud total de la línea de petición
     if (strlen(request_line) >= MAX_REQUEST_LINE)
         return HTTP_400_BAD_REQUEST;
 
-    /* ── Paso 2: Descomponer método, URI y versión ──────────────────────── */
+    //Paso 2: Descomponer método, URI y versión
     char method[16]  = {0};
     char uri[MAX_URI_SIZE] = {0};
     char version[16] = {0};
@@ -72,23 +67,23 @@ int parse_request(const char *buffer, size_t len, http_request_t *req)
     if (fields != 3)
         return HTTP_400_BAD_REQUEST;
 
-    /* ── Paso 3: Validar el método HTTP ─────────────────────────────────── */
+    //Paso 3: Validar el método HTTP
     if (strncmp(method, "GET", 3) != 0)
         return HTTP_405_METHOD_NOT_ALLOWED;
 
-    /* ── Paso 4: Validar la versión HTTP ────────────────────────────────── */
+    //Paso 4: Validar la versión HTTP
     if (strncmp(version, "HTTP/", 5) != 0)
         return HTTP_400_BAD_REQUEST;
 
-    /* ── Paso 5: Copiar campos validados a la estructura ────────────────── */
+    //Paso 5: Copiar campos validados a la estructura
     snprintf(req->method,  sizeof(req->method),  "%s", method);
     snprintf(req->uri,     sizeof(req->uri),     "%s", uri);
     snprintf(req->version, sizeof(req->version), "%s", version);
 
 
-    /* ── Paso 6: Parsear encabezados ─────────────────────────────────────── */
+    //Paso 6: Parsear encabezados
     req->header_count = 0;
-    req->keep_alive   = 0;  /* Por defecto: cerrar conexión */
+    req->keep_alive   = 0;  //Por defecto: cerrar conexión
 
     /*
      * HTTP/1.1 define keep-alive como comportamiento por defecto.
@@ -101,27 +96,27 @@ int parse_request(const char *buffer, size_t len, http_request_t *req)
     char *line = strtok_r(NULL, "\r\n", &saveptr);
     while (line != NULL && strlen(line) > 0 && req->header_count < MAX_HEADERS) {
 
-        /* Validar longitud del encabezado completo */
+        //Validar longitud del encabezado completo
         if (strlen(line) >= MAX_HEADER_SIZE)
             return HTTP_400_BAD_REQUEST;
 
-        /* Encontrar el separador ':' */
+        //Encontrar el separador ':'
         char *colon = strchr(line, ':');
         if (colon == NULL) {
             line = strtok_r(NULL, "\r\n", &saveptr);
-            continue;   /* Encabezado mal formado, ignorar */
+            continue;   //Encabezado mal formado, ignorar
         }
 
-        /* Separar nombre y valor */
+        //Separar nombre y valor
         *colon = '\0';
         char *name  = line;
         char *value = colon + 1;
 
-        /* Saltar espacios al inicio del valor */
+        //Saltar espacios al inicio del valor
         while (*value == ' ' || *value == '\t')
             value++;
 
-        /* Guardar el encabezado de forma segura */
+        //Guardar el encabezado de forma segura
         http_header_t *hdr = &req->headers[req->header_count];
         strncpy(hdr->name,  name,  sizeof(hdr->name)  - 1);
         strncpy(hdr->value, value, sizeof(hdr->value) - 1);
@@ -129,7 +124,7 @@ int parse_request(const char *buffer, size_t len, http_request_t *req)
         hdr->value[sizeof(hdr->value) - 1] = '\0';
         req->header_count++;
 
-        /* Detectar Connection: close para deshabilitar keep-alive */
+        //Detectar Connection: close para deshabilitar keep-alive
         if (strcasecmp(name, "Connection") == 0) {
             if (strcasecmp(value, "close") == 0)
                 req->keep_alive = 0;
@@ -140,10 +135,10 @@ int parse_request(const char *buffer, size_t len, http_request_t *req)
         line = strtok_r(NULL, "\r\n", &saveptr);
     }
 
-    return 0;   /* Éxito */
+    return 0;   //Éxito
 }
 
-/* ── Generación de respuestas HTTP ──────────────────────────────────────── */
+//Generación de respuestas HTTP
 
 /*
  * send_response: envía una respuesta HTTP completa.
@@ -154,13 +149,13 @@ int parse_request(const char *buffer, size_t len, http_request_t *req)
 void send_response(int client_fd, http_status_t status,
                    const char *content_type, const char *body, size_t body_len)
 {
-    /* Generar fecha RFC 7231 para el encabezado Date */
+    //Generar fecha RFC 7231 para el encabezado Date
     char date_buf[128];
     time_t now = time(NULL);
     struct tm *gmt = gmtime(&now);
     strftime(date_buf, sizeof(date_buf), "%a, %d %b %Y %H:%M:%S GMT", gmt);
 
-    /* Construir cabecera HTTP con snprintf (seguro) */
+    // Construir cabecera HTTP con snprintf (seguro)
     char header[1024];
     int header_len = snprintf(header, sizeof(header),
         "HTTP/1.1 %d %s\r\n"
@@ -178,14 +173,14 @@ void send_response(int client_fd, http_status_t status,
     );
 
     if (header_len < 0 || header_len >= (int)sizeof(header)) {
-        /* Buffer de cabecera insuficiente (no debería ocurrir) */
+        // Buffer de cabecera insuficiente (no debería ocurrir)
         return;
     }
 
-    /* Enviar cabecera */
+    // Enviar cabecera
     send(client_fd, header, (size_t)header_len, MSG_NOSIGNAL);
 
-    /* Enviar cuerpo si existe */
+    // Enviar cuerpo si existe
     if (body && body_len > 0)
         send(client_fd, body, body_len, MSG_NOSIGNAL);
 }
