@@ -1,172 +1,169 @@
-# minihttpd
+    # minihttpd
 
-Servidor HTTP/1.1 básico desarrollado en C utilizando sockets TCP y epoll.
+    Servidor HTTP/1.1 básico desarrollado en C utilizando sockets TCP y epoll.
 
----
+    ---
 
-# Estructura del proyecto
+    # Estructura del proyecto
 
-```text
-minihttpd/
-├── include/
-├── src/
-├── obj/
-├── www/
-├── Makefile
-└── README.md
-```
+    ```text
+    minihttpd/
+    ├── include/
+    ├── src/
+    ├── obj/
+    ├── www/
+    ├── Makefile
+    └── README.md
+    ```
 
----
+    ---
 
-# Navegación rápida
+    # Navegación rápida
 
-## Código fuente
+    ## Código fuente
 
-- [main.c](src/main.c)
-- [server.c](src/server.c)
-- [http.c](src/http.c)
-- [files.c](src/files.c)
-- [mime.c](src/mime.c)
+    - [main.c](src/main.c)
+    - [server.c](src/server.c)
+    - [http.c](src/http.c)
+    - [files.c](src/files.c)
+    - [mime.c](src/mime.c)
 
----
+    ---
 
-## Headers
+    ## Headers
 
-- [server.h](include/server.h)
-- [http.h](include/http.h)
-- [files.h](include/files.h)
-- [mime.h](include/mime.h)
+    - [server.h](include/server.h)
+    - [http.h](include/http.h)
+    - [files.h](include/files.h)
+    - [mime.h](include/mime.h)
 
----
+    ---
 
-## Archivos web
+    ## Archivos web
 
-- [index.html](www/index.html)
-- [style.css](www/style.css)
-- [app.js](www/app.js)
-- [image.png](www/image.png)
+    - [index.html](www/index.html)
+    - [style.css](www/style.css)
+    - [image.png](www/image.png)
 
----
+    ---
 
-# Características
+    # Características
 
-- HTTP/1.1
-- Método GET
-- epoll
-- Keep-Alive
-- MIME Types
-- Directory Traversal Protection
-- Manejo de errores HTTP
+    - HTTP/1.1
+    - Método GET
+    - epoll
+    - Keep-Alive
+    - MIME Types
+    - Directory Traversal Protection
+    - Manejo de errores HTTP
 
----
+    ---
 
-# Compilación
+    # Compilación
 
-```bash
-make
-```
+    ```bash
+    make
+    ```
 
----
+    ---
 
-# Ejecución
+    # Ejecución
 
-```bash
-./minihttpd
-```
+    ```bash
+    ./minihttpd
+    ```
 
-o:
+    o:
 
-```bash
-make run
-```
+    ```bash
+    make run
+    ```
 
-Servidor disponible en:
+    Servidor disponible en:
 
-```text
-http://localhost:8080
-```
+    ```text
+    http://localhost:8080
+    ```
 
----
+    ---
 
-# Pruebas
+    # Pruebas
 
-## Request básica
+    ## Request básica
 
-```bash
-curl http://localhost:8080
-```
+    ```bash
+    curl http://localhost:8080
+    ```
 
-## Ver headers
+    ## Ver headers
 
-```bash
-curl -v http://localhost:8080
-```
+    ```bash
+    curl -v http://localhost:8080
+    ```
 
-## Benchmark
+    ## Benchmark
 
-```bash
-ab -n 1000 -c 100 http://localhost:8080/
-```
+    ```bash
+    ab -n 1000 -c 100 http://localhost:8080/
+    ```
 
-## Keep-Alive
+    ## Keep-Alive
 
-```bash
-ab -k -n 10000 -c 100 http://localhost:8080/
-```
+    ```bash
+    ab -k -n 10000 -c 100 http://localhost:8080/
+    ```
 
----
+    ---
 
-# Seguridad
+    # Seguridad
 
-## Directory Traversal
+    ## Directory Traversal
 
-```bash
-curl --path-as-is http://localhost:8080/../../../etc/passwd
-```
+    ```bash
+    curl --path-as-is http://localhost:8080/../../../etc/passwd
+    ```
 
-Respuesta esperada:
+    Respuesta esperada:
 
-```text
-403 Forbidden
-```
+    ```text
+    403 Forbidden
+    ```
 
----
+    ---
 
-# MIME Types
+    # MIME Types
 
-| Extensión | MIME |
-|---|---|
-| .html | text/html |
-| .css | text/css |
-| .js | application/javascript |
-| .png | image/png |
-| .json | application/json |
+    | Extensión | MIME |
+    |---|---|
+    | .html | text/html |
+    | .css | text/css |
+    | .png | image/png |
 
----
+    ---
 
-# Códigos HTTP
+    # Códigos HTTP
 
-- 200 OK
-- 400 Bad Request
-- 403 Forbidden
-- 404 Not Found
-- 405 Method Not Allowed
-- 500 Internal Server Error
+    - 200 OK
+    - 400 Bad Request
+    - 403 Forbidden
+    - 404 Not Found
+    - 405 Method Not Allowed
+    - 500 Internal Server Error
 
----
+    ---
 
-# Herramientas utilizadas
+    # Herramientas utilizadas
 
-- GCC
-- Linux / WSL
-- epoll
-- sockets TCP
-- curl
-- ApacheBench
-- Valgrind
+    - GCC
+    - Linux / WSL
+    - epoll
+    - sockets TCP
+    - curl
+    - ApacheBench
+    - Valgrind
 
----
+    ---
 
-# Autor
+    # Autor
 
-Jhonn Saeteros
+    Jhonn Saeteros
