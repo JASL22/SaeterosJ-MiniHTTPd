@@ -66,7 +66,7 @@ clean:
 run: all
 	./$(TARGET) 8080
 
-# ── Ejecutar con Valgrind para detectar memory leaks ─────────
+# ── Ejecutar con Valgrind para detectar memory leaks 
 valgrind: all
 	valgrind --leak-check=full --show-leak-kinds=all ./$(TARGET) 8080
 
