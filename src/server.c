@@ -10,7 +10,7 @@
 #include <arpa/inet.h>
 #include "server.h"
 #include "http.h"
-#include "files.h"─────────────────────────────────────────────── */
+#include "files.h"
 static int set_nonblocking(int fd)
 {
     int flags = fcntl(fd, F_GETFL, 0);
